@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Khamees Travel and Tourism (voucher)</title>
+    <!-- Google Fonts: Cairo لضبط وتناسق النصوص الإنجليزية والعربية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- مكتبة html2pdf لتوليد ملف PDF بضغطة زر -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Verdana, Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        .voucher-container {
+            width: 85%;
+            max-width: 950px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 40px;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 25px;
+        }
+        .header h1 {
+            color: #004085;
+            margin-bottom: 8px;
+            font-size: 2.2em;
+        }
+        .header p {
+            margin: 4px 0;
+            font-size: 1em;
+            color: #555;
+        }
+        .voucher-title-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            color: #d9534f;
+            z-index: 100;
+            text-align: left;
+        }
+
+        .section-title {
+            background-color: #e9f5ff;
+            padding: 12px 20px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #0056b3;
+            border-left: 6px solid #007bff;
+            font-size: 1.15em;
+        }
+        .field-group {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .field {
+            flex: 1 1 48%;
+            margin-right: 4%;
+            margin-bottom: 20px;
+        }
+        .field:nth-child(2n) {
+            margin-right: 0;
+        }
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+            font-size: 0.95em;
+        }
+        .field input[type="text"],
+        .field input[type="date"],
+        .field input[type="number"],
+        .field textarea,
+        .field select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .field input[type="text"]:focus,
+        .field input[type="date"]:focus,
+        .field input[type="number"]:focus,
+        .field textarea:focus,
+        .field select:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 6px rgba(0, 86, 179, 0.2);
+            outline: none;
+        }
+        .field.full-width {
+            flex: 1 1 100%;
+            margin-right: 0;
+        }
+        .guest-details {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            background-color: #fdfdfd;
+        }
+        .guest-details h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #0056b3;
+            font-size: 1.1em;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .button-group button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-family: inherit;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+        .button-group button.btn-secondary {
+            background-color: #28a745;
+        }
+        .button-group button.btn-secondary:hover {
+            background-color: #218838;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 150px;
+            height: auto;
+            z-index: 100;
+        }
+
+        .field .print-value {
+            display: none;
+            padding: 8px 12px;
+            font-size: 0.95em;
+            min-height: 1.2em;
+            box-sizing: border-box;
+            word-wrap: break-word;
+        }
+
+        /* تنسيقات الطباعة وتوليد الـ PDF */
+        @media print, .pdf-render {
+            body {
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+            .voucher-container {
+                box-shadow: none;
+                border: 1px solid #a0a0a0;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px 30px;
+                margin: 0 auto;
+            }
+            .button-group {
+                display: none !important;
+            }
+            .logo {
+                display: block;
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                width: 120px;
+                z-index: 100;
+            }
+            .voucher-title-left {
+                display: block;
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                font-size: 1.8em;
+                color: #d9534f;
+                z-index: 100;
+            }
+            .field input,
+            .field textarea,
+            .field select {
+                display: none !important;
+            }
+            .field .print-value {
+                display: block;
+                border: 1px solid #555 !important;
+                border-radius: 6px;
+                background-color: transparent !important;
+                padding: 6px 10px;
+                font-size: 0.95em;
+                min-height: 1.2em;
+                box-sizing: border-box;
+                word-wrap: break-word;
+                line-height: 1.4;
+                color: #222;
+            }
+            .field label {
+                font-weight: bold;
+                display: inline-block;
+                min-width: 160px;
+                margin-right: 10px;
+                vertical-align: top;
+                color: #444;
+            }
+            .field .print-value {
+                display: inline-block;
+                width: calc(100% - 175px);
+                vertical-align: top;
+            }
+            .field.full-width label {
+                display: block;
+                margin-bottom: 5px;
+                min-width: unset;
+            }
+            .field.full-width .print-value {
+                display: block;
+                width: 100%;
+                margin-top: 5px;
+            }
+            .field-group {
+                display: flex;
+                flex-wrap: wrap;
+                margin-bottom: 8px;
+            }
+            .field {
+                flex: 1 1 48%;
+                margin-right: 4%;
+                margin-bottom: 8px;
+            }
+            .field:nth-child(2n) {
+                margin-right: 0;
+            }
+            .field.full-width {
+                flex: 1 1 100%;
+                margin-right: 0;
+            }
+            .guest-details {
+                border: 1px dashed #bbb;
+                page-break-inside: avoid;
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+            .header {
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+            .section-title {
+                margin-top: 15px;
+                margin-bottom: 10px;
+                padding: 8px 12px;
+                font-size: 1.05em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="voucher-container" id="voucherContainer">
+        <img src="image_68fcf5.png" alt="Al Khamees Travel Logo" class="logo">
+
+        <div class="voucher-title-left">Voucher</div>
+
+        <div class="header">
+            <h1 style="display: none;">Al Khamees Travel</h1>
+            <p style="color: #d9534f; font-weight: bold; font-size: 1.2em;">Al Khamees Travel and Tourism</p>
+            <p>Tel: (+965) 1899777</p>
+            <p>للإتصال أو واتساب</p>
+        </div>
+
+        <div class="section-title">Booking Details</div>
+        <div class="field-group">
+            <div class="field">
+                <label for="bookingRef">Booking Ref.:</label>
+                <input type="text" id="bookingRef" value="4VB8C7" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="date">Date:</label>
+                <input type="date" id="date">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="provider">Provider:</label>
+                <input type="text" id="provider" value="[Provider Name Here]" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="agentName">Agent Name:</label>
+                <input type="text" id="agentName" value="[Agent Name Here]" dir="auto">
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="section-title">Hotel Details</div>
+        <div class="field-group">
+            <div class="field full-width">
+                <label for="hotelName">Hotel Name:</label>
+                <input type="text" id="hotelName" value="Rixos Premium Qetaifan Island North 5 Stars" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="hotelAddress">Hotel Address:</label>
+                <input type="text" id="hotelAddress" value="Qetaifan Island North Street 305 Zone 69, 2977, Lusail, Qatar, Doha, Ad-Dawhah, Qatar" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="hotelTel">Hotel Phone Number:</label>
+                <input type="text" id="hotelTel" value="974-414-44444" dir="auto">
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="section-title">Accommodation Details</div>
+        <div class="field-group">
+            <div class="field">
+                <label for="holderName">Holder Name:</label>
+                <input type="text" id="holderName" value="Jasem alrabeea" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="arrivalDate">Arrival date:</label>
+                <input type="date" id="arrivalDate" value="2025-08-10">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="departureDate">Departure date:</label>
+                <input type="date" id="departureDate" value="2025-08-15">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="nights">Nights:</label>
+                <input type="number" id="nights" value="5" readonly>
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="rooms">Rooms:</label>
+                <input type="number" id="rooms" value="2" min="1" max="5">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="board">Board:</label>
+                <select id="board">
+                    <option value="Room Only">Room Only</option>
+                    <option value="Bed & Breakfast">Bed & Breakfast</option>
+                    <option value="Half Board">Half Board</option>
+                    <option value="Full Board">Full Board</option>
+                    <option value="All Inclusive" selected>All Inclusive</option>
+                    <option value="Ultra All Inclusive">Ultra All Inclusive</option>
+                </select>
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="section-title">Room and Guest Details</div>
+
+        <div class="guest-details" id="roomDetails1">
+            <h4>Room 1:</h4>
+            <div class="field full-width">
+                <label for="room1Type">Room Type:</label>
+                <input type="text" id="room1Type" class="room-type-input" value="DELUXE ROOM SEA VIEW - Y25 (All Inclusive)" data-base-type="DELUXE ROOM SEA VIEW - Y25 (All Inclusive)" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="room1Persons">Number of Persons in Room:</label>
+                <input type="number" id="room1Persons" class="room-persons-input" value="3" min="1">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="room1Names">Names:</label>
+                <textarea id="room1Names" dir="auto">ADULT 1 - Jasem alrabeea
+CHILD 1 - alrabeea Jasem - Age: 5
+CHILD 2 - alrabeeaa Jasemm - Age: 10</textarea>
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="guest-details" id="roomDetails2">
+            <h4>Room 2:</h4>
+            <div class="field full-width">
+                <label for="room2Type">Room Type:</label>
+                <input type="text" id="room2Type" class="room-type-input" value="DELUXE ROOM SEA VIEW - Y25 (All Inclusive)" data-base-type="DELUXE ROOM SEA VIEW - Y25 (All Inclusive)" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="room2Persons">Number of Persons in Room:</label>
+                <input type="number" id="room2Persons" class="room-persons-input" value="3" min="1">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="room2Names">Names:</label>
+                <textarea id="room2Names" dir="auto">ADULT 1 - Reem alabdulhadi
+CHILD 1 - alabdulhadi Reem - Age: 5
+CHILD 2 - alabdulhadiii Reemm - Age: 10</textarea>
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="guest-details" id="roomDetails3">
+            <h4>Room 3:</h4>
+            <div class="field full-width">
+                <label for="room3Type">Room Type:</label>
+                <input type="text" id="room3Type" class="room-type-input" value="Standard Room" data-base-type="Standard Room" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="room3Persons">Number of Persons in Room:</label>
+                <input type="number" id="room3Persons" class="room-persons-input" value="1" min="1">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="room3Names">Names:</label>
+                <textarea id="room3Names" dir="auto"></textarea>
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="guest-details" id="roomDetails4">
+            <h4>Room 4:</h4>
+            <div class="field full-width">
+                <label for="room4Type">Room Type:</label>
+                <input type="text" id="room4Type" class="room-type-input" value="Standard Room" data-base-type="Standard Room" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="room4Persons">Number of Persons in Room:</label>
+                <input type="number" id="room4Persons" class="room-persons-input" value="1" min="1">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="room4Names">Names:</label>
+                <textarea id="room4Names" dir="auto"></textarea>
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="guest-details" id="roomDetails5">
+            <h4>Room 5:</h4>
+            <div class="field full-width">
+                <label for="room5Type">Room Type:</label>
+                <input type="text" id="room5Type" class="room-type-input" value="Standard Room" data-base-type="Standard Room" dir="auto">
+                <span class="print-value"></span>
+            </div>
+            <div class="field">
+                <label for="room5Persons">Number of Persons in Room:</label>
+                <input type="number" id="room5Persons" class="room-persons-input" value="1" min="1">
+                <span class="print-value"></span>
+            </div>
+            <div class="field full-width">
+                <label for="room5Names">Names:</label>
+                <textarea id="room5Names" dir="auto"></textarea>
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="section-title">Cancellation and Amendment Policy</div>
+        <div class="field-group">
+            <div class="field full-width">
+                <label for="cancellationPolicy">Cancellation and Amendment Policy Details:</label>
+                <select id="cancellationPolicy">
+                    <option value="non refundable non amendable">non refundable non amendable</option>
+                    <option value="refundable">refundable</option>
+                </select>
+                <span class="print-value"></span>
+            </div>
+            <div class="field" id="refundableUntilField">
+                <label for="refundableUntilDate">Refundable until:</label>
+                <input type="date" id="refundableUntilDate">
+                <span class="print-value"></span>
+            </div>
+            <div class="field" id="cancellationPenaltyField">
+                <label for="cancellationPenalty">Cancellation Penalty:</label>
+                <input type="text" id="cancellationPenalty" placeholder="e.g., 50% or 100 KWD" dir="auto">
+                <span class="print-value"></span>
+            </div>
+        </div>
+
+        <div class="section-title">Other Notes</div>
+        <div class="field full-width">
+            <label for="notes">Notes:</label>
+            <textarea id="notes" dir="auto">Bachelors / Men-only groups are not permitted by hotel policy.</textarea>
+            <span class="print-value"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="button" onclick="window.print()">طباعة / Print</button>
+            <button type="button" class="btn-secondary" onclick="exportToPDF()">تحميل PDF مباشرة</button>
+        </div>
+
+    </div>
+
+    <script>
+        const container = document.getElementById('voucherContainer');
+        const arrivalDateInput = document.getElementById('arrivalDate');
+        const departureDateInput = document.getElementById('departureDate');
+        const nightsInput = document.getElementById('nights');
+        const roomsInput = document.getElementById('rooms');
+        const roomSections = document.querySelectorAll('.guest-details');
+        const cancellationPolicySelect = document.getElementById('cancellationPolicy');
+        const refundableUntilField = document.getElementById('refundableUntilField');
+        const cancellationPenaltyField = document.getElementById('cancellationPenaltyField');
+
+        // تحديث تاريخ المغادرة الأدنى وحساب الليالي
+        function calculateNights() {
+            if (arrivalDateInput.value) {
+                departureDateInput.min = arrivalDateInput.value;
+            }
+
+            const arrival = new Date(arrivalDateInput.value);
+            const departure = new Date(departureDateInput.value);
+
+            if (arrivalDateInput.value && departureDateInput.value && departure > arrival) {
+                const diffTime = Math.abs(departure - arrival);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                nightsInput.value = diffDays;
+            } else {
+                nightsInput.value = '';
+            }
+            updateFieldPrintValue(nightsInput);
+        }
+
+        // تحديث نص نوع الغرفة بعدد الأشخاص
+        function updateRoomTypeDisplay(roomSection) {
+            const typeInput = roomSection.querySelector('.room-type-input');
+            const personsInput = roomSection.querySelector('.room-persons-input');
+            if (!typeInput || !personsInput) return;
+
+            let baseType = typeInput.dataset.baseType || typeInput.value.replace(/ \(\d+ Persons\)/, '');
+            typeInput.dataset.baseType = baseType;
+
+            const persons = parseInt(personsInput.value, 10);
+            if (!isNaN(persons) && persons > 0) {
+                typeInput.value = `${baseType} (${persons} Persons)`;
+            } else {
+                typeInput.value = baseType;
+            }
+            updateFieldPrintValue(typeInput);
+        }
+
+        // إظهار/إخفاء تفاصيل الغرف
+        function toggleRoomDetails() {
+            const count = Math.min(Math.max(parseInt(roomsInput.value) || 1, 1), roomSections.length);
+            roomSections.forEach((section, index) => {
+                if (index < count) {
+                    section.style.display = 'block';
+                    updateRoomTypeDisplay(section);
+                } else {
+                    section.style.display = 'none';
+                    section.querySelectorAll('input, textarea').forEach(input => {
+                        input.value = '';
+                        updateFieldPrintValue(input);
+                    });
+                }
+            });
+            updateFieldPrintValue(roomsInput);
+        }
+
+        // تحديث حقول سياسة الإلغاء
+        function toggleCancellationPolicy() {
+            const isRefundable = cancellationPolicySelect.value === 'refundable';
+            refundableUntilField.style.display = isRefundable ? 'block' : 'none';
+            cancellationPenaltyField.style.display = isRefundable ? 'block' : 'none';
+            if (!isRefundable) {
+                document.getElementById('refundableUntilDate').value = '';
+                document.getElementById('cancellationPenalty').value = '';
+            }
+            updateAllPrintValues();
+        }
+
+        // تحديث قيمة الطباعة لعنصر محدد
+        function updateFieldPrintValue(element) {
+            const printSpan = element.nextElementSibling;
+            if (!printSpan || !printSpan.classList.contains('print-value')) return;
+
+            let val = element.value;
+            if (element.tagName === 'SELECT') {
+                val = element.options[element.selectedIndex]?.text || '';
+            } else if (element.type === 'date' && val) {
+                const parts = val.split('-');
+                if (parts.length === 3) val = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
+            if (element.tagName === 'TEXTAREA') {
+                printSpan.innerHTML = val.replace(/\n/g, '<br>');
+            } else {
+                printSpan.textContent = val;
+            }
+        }
+
+        // تحديث جميع قيم الطباعة
+        function updateAllPrintValues() {
+            container.querySelectorAll('input, select, textarea').forEach(updateFieldPrintValue);
+        }
+
+        // Event Delegation مركزي لمتابعة التغييرات
+        container.addEventListener('input', (e) => {
+            if (e.target === arrivalDateInput || e.target === departureDateInput) calculateNights();
+            if (e.target === roomsInput) toggleRoomDetails();
+            if (e.target.classList.contains('room-persons-input')) {
+                updateRoomTypeDisplay(e.target.closest('.guest-details'));
+            }
+            updateFieldPrintValue(e.target);
+        });
+
+        container.addEventListener('change', (e) => {
+            if (e.target === cancellationPolicySelect) toggleCancellationPolicy();
+            updateFieldPrintValue(e.target);
+        });
+
+        // تحميل كـ PDF
+        function exportToPDF() {
+            updateAllPrintValues();
+            const element = document.getElementById('voucherContainer');
+            const opt = {
+                margin: 8,
+                filename: `Voucher_${document.getElementById('bookingRef').value || 'doc'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // التهيئة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('date');
+            if (!dateInput.value) dateInput.value = today;
+
+            calculateNights();
+            toggleRoomDetails();
+            toggleCancellationPolicy();
+            updateAllPrintValues();
+        });
+    </script>
+</body>
+</html>
