@@ -8,9 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* إلغاء طباعة رابط الويب سايت والتاريخ ورؤوس الصفحات */
         @page {
             size: A4 portrait;
-            margin: 8mm 10mm;
+            margin: 0;
         }
 
         *, *::before, *::after {
@@ -23,8 +24,6 @@
             padding: 15px;
             background-color: #f4f6f9;
             color: #2c3e50;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
             text-align: left;
             direction: ltr;
         }
@@ -40,7 +39,7 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
 
-        /* Header */
+        /* الهيدر بنظام جدول صريح لمنع التداخل */
         .header-table {
             width: 100%;
             border-collapse: collapse;
@@ -92,7 +91,6 @@
             object-fit: contain;
         }
 
-        /* Sections */
         .section-title {
             background-color: #ebf3fc;
             padding: 6px 12px;
@@ -104,9 +102,9 @@
             border-left: 4px solid #0056b3;
             font-size: 13px;
             text-transform: uppercase;
+            text-align: left;
         }
 
-        /* Grid */
         .fields-table {
             width: 100%;
             border-collapse: separate;
@@ -152,6 +150,7 @@
             color: #1a202c;
             background-color: #fff;
             text-align: left;
+            direction: ltr;
         }
         .field-box input:focus,
         .field-box select:focus,
@@ -178,9 +177,9 @@
             word-break: break-word;
             white-space: pre-wrap;
             text-align: left;
+            direction: ltr;
         }
 
-        /* Room details */
         .room-card {
             border: 1px solid #e2e8f0;
             background-color: #f8fafc;
@@ -188,6 +187,7 @@
             padding: 10px 12px;
             margin-bottom: 8px;
             page-break-inside: avoid;
+            text-align: left;
         }
         .room-card h4 {
             margin: 0 0 8px 0;
@@ -198,7 +198,6 @@
             text-align: left;
         }
 
-        /* Buttons */
         .actions-bar {
             text-align: center;
             margin-top: 20px;
@@ -217,21 +216,18 @@
             cursor: pointer;
             margin: 0 6px;
         }
-        .actions-bar button:hover {
-            background-color: #003d82;
-        }
 
-        /* Print Settings */
+        /* عند الطباعة */
         @media print {
             body {
                 background: #fff !important;
-                padding: 0 !important;
+                padding: 10mm !important;
                 margin: 0 !important;
             }
             .voucher-container {
-                border: none !important;
+                border: 1px solid #a0aec0 !important;
                 box-shadow: none !important;
-                padding: 0 !important;
+                padding: 15px 20px !important;
                 max-width: 100% !important;
             }
             .actions-bar {
@@ -266,7 +262,6 @@
 <body>
 
 <div class="voucher-container" id="voucherContainer">
-    <!-- Header -->
     <table class="header-table">
         <tr>
             <td class="header-left">
@@ -283,7 +278,6 @@
         </tr>
     </table>
 
-    <!-- Booking Details -->
     <div class="section-title">Booking Details</div>
     <table class="fields-table">
         <tr>
@@ -320,7 +314,6 @@
         </tr>
     </table>
 
-    <!-- Hotel Details -->
     <div class="section-title">Hotel Details</div>
     <table class="fields-table">
         <tr>
@@ -350,7 +343,6 @@
         </tr>
     </table>
 
-    <!-- Accommodation Details -->
     <div class="section-title">Accommodation Details</div>
     <table class="fields-table">
         <tr>
@@ -410,7 +402,6 @@
         </tr>
     </table>
 
-    <!-- Room and Guest Details -->
     <div class="section-title">Room and Guest Details</div>
 
     <div class="room-card" id="roomCard1">
@@ -480,7 +471,6 @@ CHILD 4 - turki aldosari - Age : 2</textarea>
         </table>
     </div>
 
-    <!-- Cancellation & Policy -->
     <div class="section-title">Cancellation and Amendment Policy</div>
     <table class="fields-table">
         <tr>
@@ -513,7 +503,6 @@ CHILD 4 - turki aldosari - Age : 2</textarea>
         </tr>
     </table>
 
-    <!-- Other Notes -->
     <div class="section-title">Other Notes</div>
     <table class="fields-table">
         <tr>
@@ -545,14 +534,11 @@ free child cot</textarea>
     const penaltyRow = document.getElementById('penaltyRow');
 
     function calculateNights() {
-        if (arrivalDateInput.value) {
-            departureDateInput.min = arrivalDateInput.value;
-        }
+        if (arrivalDateInput.value) departureDateInput.min = arrivalDateInput.value;
         const a = new Date(arrivalDateInput.value);
         const d = new Date(departureDateInput.value);
         if (arrivalDateInput.value && departureDateInput.value && d > a) {
-            const diff = Math.ceil(Math.abs(d - a) / (1000 * 60 * 60 * 24));
-            nightsInput.value = diff;
+            nightsInput.value = Math.ceil(Math.abs(d - a) / (1000 * 60 * 60 * 24));
         } else {
             nightsInput.value = '';
         }
